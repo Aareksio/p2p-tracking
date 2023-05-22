@@ -1,0 +1,19 @@
+{
+  "name": "p2p-tracking",
+  "description": "Track p2p trades on CS:GO gamba sites 🍿",
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r dotenv/config ./src/index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@planetscale/database": "^1.7.0",
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "graphql-ws": "^5.13.1",
+    "socket.io-client": "2",
+    "ws": "^8.13.0"
+  }
+}
