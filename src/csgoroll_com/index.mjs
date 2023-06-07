@@ -18,7 +18,7 @@ async function subscribe(client, query, variables = {}, callback) {
       { query, variables },
       { next: callback, error: reject, complete: resolve },
     );
-  }) 
+  })
 
   return unsubscribe
 }
@@ -27,7 +27,8 @@ export class TrackingRoll extends TrackingBase {
   async init() {
     this.client = createClient({
       url: websocketURL,
-      webSocketImpl: WebSocket
+      webSocketImpl: WebSocket,
+      retryAttempts: Infinity, // worth a try? I mean roll has frequent disconnects..
     });
 
     subscribe(this.client, subscribeCompletedTrades, { status: "COMPLETED" }, (response) => {
