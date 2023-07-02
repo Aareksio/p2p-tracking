@@ -1,10 +1,10 @@
-import { createClient } from "graphql-ws"
-import WebSocket from "ws"
+import { createClient } from 'graphql-ws'
+import WebSocket from 'ws'
 
-import { TrackingBase } from "../common/TrackingBase.mjs"
-import { subscribeCompletedTrades } from "./queries.mjs"
+import { TrackingBase } from '../common/TrackingBase.mjs'
+import { subscribeCompletedTrades } from './queries.mjs'
 
-const websocketURL = "wss://api.csgoroll.com/graphql"
+const websocketURL = 'wss://api.csgoroll.com/graphql'
 
 function getPriceCents(priceRaw) {
   return priceRaw * 70
@@ -31,7 +31,7 @@ export class TrackingRoll extends TrackingBase {
       shouldRetry: () => true,
     })
 
-    subscribe(this.client, subscribeCompletedTrades, { status: "COMPLETED" }, (response) => {
+    subscribe(this.client, subscribeCompletedTrades, { status: 'COMPLETED' }, (response) => {
       const { marketName, value } = response.data.updateTrade.trade.tradeItems[0]
       this.events.emit("item_sold", { marketName, priceRemoteCents: getPriceCents(value), priceRemoteRaw: value })
     })
