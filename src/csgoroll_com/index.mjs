@@ -10,20 +10,25 @@ function getPriceCents(priceRaw) {
   return priceRaw * 70
 }
 
-async function subscribe(client, query, variables = {}, callback) {
+function subscribe(client, query, variables = {}, callback) {
   let unsubscribe
 
-  const resubscribe = () => (unsubscribe = subscribe(client, query, variables, callback))
+  const resubscribe = () => {
+    // Unsubscribe handler is actually lost after resubscribe
+    // TODO: Wrap unsubscribe to prevent allow overriding reference
+    unsubscribe = subscribe(client, query, variables, callback)
+  }
 
-  // this should never resolve or complete so we resubscribe
-  unsubscribe = client.subscribe({ query, variables }, { next: callback, error: resubscribe, complete: resubscribe })
+  unsubscribe = client.subscribe(
+   { query, variables }, 
+   { next: callback, error: resubscribe, complete: resubscribe }
+  )
+
   return unsubscribe
 }
 
 export class TrackingRoll extends TrackingBase {
   async init() {
-    // This should always now keep tracking the trades
-    // if it stops doing that, I blame Killian
     this.client = createClient({
       url: websocketURL,
       webSocketImpl: WebSocket,
@@ -33,7 +38,7 @@ export class TrackingRoll extends TrackingBase {
 
     subscribe(this.client, subscribeCompletedTrades, { status: 'COMPLETED' }, (response) => {
       const { marketName, value } = response.data.updateTrade.trade.tradeItems[0]
-      this.events.emit("item_sold", { marketName, priceRemoteCents: getPriceCents(value), priceRemoteRaw: value })
+      this.events.emit('item_sold', { marketName, priceRemoteCents: getPriceCents(value), priceRemoteRaw: value })
     })
   }
 }
